@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#08080f">
+<title>Cinema & Sociedade — Uma Viagem pela Sétima Arte</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#08080f;--deep:#0d0d16;--surface:#13131e;--card:#181824;
+  --border:#252535;--border2:#2e2e42;--gold:#c9a84c;--gold2:#e8c96a;
+  --gold-dim:#5a4820;--red:#8b1a1a;--red2:#b02020;--white:#f0ede8;
+  --muted:#7a7a90;--text:#ccc9c0;--green:#27ae60;--tomato:#e74c3c;
+}
+html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--text);font-family:'Inter',sans-serif;font-weight:300;line-height:1.7;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
+
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.45;mix-blend-mode:overlay}
+
+#progress{position:fixed;top:0;left:0;height:2px;background:linear-gradient(to right,var(--red),var(--gold));z-index:10001;width:0%;transition:width .08s;pointer-events:none}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:60px;background:rgba(8,8,15,.97);border-bottom:1px solid rgba(201,168,76,.1);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.25em;color:var(--gold);display:flex;align-items:center;gap:10px}
+.nav-logo-dot{width:5px;height:5px;background:var(--red2);border-radius:50%;animation:pulse 2s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+.nav-menu-btn{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:8px}
+.nav-menu-btn span{width:22px;height:1.5px;background:var(--muted);display:block;transition:all .3s}
+.nav-links{display:flex;gap:28px;list-style:none}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;transition:color .2s;white-space:nowrap}
+.nav-links a:hover,.nav-links a.active-link{color:var(--gold)}
+.mobile-menu{display:none;position:fixed;inset:0;background:rgba(8,8,15,.98);z-index:9000;flex-direction:column;align-items:center;justify-content:center;gap:32px}
+.mobile-menu.open{display:flex}
+.mobile-menu a{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.2em;color:var(--white);text-decoration:none;text-transform:uppercase;transition:color .2s}
+.mobile-menu a:hover{color:var(--gold)}
+.mobile-close{position:absolute;top:20px;right:20px;background:none;border:none;color:var(--muted);font-size:2rem;cursor:pointer;padding:8px}
+
+/* HERO */
+.hero{position:relative;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 20px 80px;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 100% 70% at 50% 30%,rgba(139,26,26,.13) 0%,transparent 60%),radial-gradient(ellipse 50% 50% at 15% 80%,rgba(74,111,165,.07) 0%,transparent 50%),linear-gradient(180deg,#08080f 0%,#0d0d16 50%,#08080f 100%)}
+.filmstrip{position:absolute;top:0;left:0;right:0;height:12px;background:repeating-linear-gradient(90deg,#000 0px,#000 26px,var(--gold-dim) 26px,var(--gold-dim) 34px,#000 34px,#000 60px);opacity:.35;animation:stripMove 10s linear infinite}
+.filmstrip-b{top:auto;bottom:0;animation-direction:reverse}
+@keyframes stripMove{to{background-position:60px}}
+#particles{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.particle{position:absolute;border-radius:50%;animation:float linear infinite}
+@keyframes float{0%{transform:translateY(100vh);opacity:0}10%{opacity:1}90%{opacity:.6}100%{transform:translateY(-80px);opacity:0}}
+
+.hero-eye{position:relative;font-size:.65rem;letter-spacing:.4em;text-transform:uppercase;color:var(--gold);margin-bottom:20px;display:flex;align-items:center;gap:14px}
+.hero-eye::before,.hero-eye::after{content:'';width:36px;height:1px;background:linear-gradient(to right,transparent,var(--gold-dim),transparent)}
+.hero-title{position:relative;font-family:'Bebas Neue',sans-serif;font-size:clamp(3.2rem,14vw,9rem);letter-spacing:.03em;line-height:.9;color:var(--white);margin-bottom:14px}
+.hero-title .shine{display:block;background:linear-gradient(135deg,var(--gold) 0%,var(--gold2) 50%,var(--gold) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200% auto;animation:shimmer 4s linear infinite}
+@keyframes shimmer{to{background-position:200% center}}
+.hero-sub{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(.9rem,3.5vw,1.3rem);color:var(--muted);margin-bottom:16px;max-width:500px;padding:0 16px}
+.hero-yr{font-size:.65rem;letter-spacing:.4em;text-transform:uppercase;color:var(--border2);margin-bottom:50px}
+.scroll-hint{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--muted);font-size:.6rem;letter-spacing:.25em;text-transform:uppercase;animation:bounce 2.2s ease-in-out infinite}
+.scroll-hint-line{width:1px;height:32px;background:linear-gradient(to bottom,var(--gold),transparent)}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(7px)}}
+
+/* SECTIONS SHARED */
+section{padding:80px 0}
+.container{max-width:1240px;margin:0 auto;padding:0 20px}
+.s-eye{font-size:.65rem;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.s-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,7vw,3.8rem);letter-spacing:.04em;color:var(--white);line-height:1;margin-bottom:14px}
+.s-divider{width:50px;height:2px;background:linear-gradient(to right,var(--gold),transparent)}
+.s-header-center{text-align:center;margin-bottom:56px}
+.s-header-center .s-divider{margin:0 auto}
+
+/* SCORSESE */
+.scorsese-section{background:var(--deep);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.scorsese-grid{display:grid;grid-template-columns:1fr 420px;gap:64px;align-items:center}
+.scorsese-text p{font-size:.93rem;color:var(--text);line-height:1.85;margin-bottom:14px}
+.scorsese-text p.lead{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--white);font-style:italic;margin-bottom:18px}
+.vid-frame{position:relative;aspect-ratio:16/9;border-radius:3px;overflow:hidden;border:1px solid rgba(201,168,76,.2);box-shadow:0 32px 80px rgba(0,0,0,.8),0 0 60px rgba(139,26,26,.1)}
+.vid-frame iframe{width:100%;height:100%;display:block;border:none}
+.vid-label{position:absolute;bottom:0;left:0;right:0;padding:44px 16px 14px;background:linear-gradient(to top,rgba(0,0,0,.9),transparent);pointer-events:none}
+.vid-label span{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+.dur-badge{display:inline-flex;align-items:center;gap:8px;margin-top:18px;padding:9px 18px;border:1px solid var(--border2);background:var(--surface);font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.dur-badge::before{content:'▶';color:var(--gold);font-size:.55rem}
+
+/* TIMELINE */
+.timeline-section{background:var(--black)}
+.tl-wrap{position:relative;padding:32px 0}
+.tl-wrap::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,transparent,var(--border2) 10%,var(--border2) 90%,transparent);transform:translateX(-50%)}
+.tl-item{display:grid;grid-template-columns:1fr 56px 1fr;gap:0 20px;margin-bottom:48px}
+.tl-item:nth-child(odd) .tl-box{grid-column:1;text-align:right;padding-right:36px}
+.tl-item:nth-child(odd) .tl-dot{grid-column:2}
+.tl-item:nth-child(odd) .tl-empty{grid-column:3}
+.tl-item:nth-child(even) .tl-empty{grid-column:1}
+.tl-item:nth-child(even) .tl-dot{grid-column:2}
+.tl-item:nth-child(even) .tl-box{grid-column:3;text-align:left;padding-left:36px}
+.tl-dot{width:56px;height:56px;border-radius:50%;background:var(--surface);border:2px solid var(--border2);font-family:'Bebas Neue',sans-serif;font-size:.85rem;color:var(--gold);letter-spacing:.08em;display:flex;align-items:center;justify-content:center;align-self:flex-start;margin-top:6px;flex-shrink:0;transition:border-color .3s,box-shadow .3s}
+.tl-item:hover .tl-dot{border-color:var(--gold);box-shadow:0 0 16px rgba(201,168,76,.15)}
+.tl-box{background:var(--card);border:1px solid var(--border);padding:24px 28px;transition:border-color .3s}
+.tl-item:hover .tl-box{border-color:var(--border2)}
+.tl-yr{font-family:'Bebas Neue',sans-serif;font-size:1.7rem;color:var(--gold);line-height:1;margin-bottom:2px}
+.tl-ttl{font-family:'Playfair Display',serif;font-size:1rem;color:var(--white);font-weight:700;margin-bottom:6px}
+.tl-desc{font-size:.82rem;color:var(--muted);line-height:1.68}
+
+/* FILMS */
+.films-section{background:var(--deep);border-top:1px solid var(--border)}
+.filter-row{display:flex;gap:6px;margin-bottom:40px;flex-wrap:wrap}
+.fbtn{padding:7px 16px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;border-radius:0}
+.fbtn:hover,.fbtn.active{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.05)}
+.films-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:2px}
+
+/* FILM CARD */
+.fc{background:var(--card);border:1px solid var(--border);overflow:hidden;cursor:pointer;transition:border-color .3s,transform .25s;position:relative}
+.fc:hover{border-color:rgba(201,168,76,.45);transform:translateY(-2px);z-index:2;box-shadow:0 16px 48px rgba(0,0,0,.6)}
+.fc-vid{position:relative;aspect-ratio:16/9;background:#000;overflow:hidden}
+.fc-vid iframe{width:100%;height:100%;display:block;border:none;pointer-events:none}
+.fc.playing .fc-vid iframe{pointer-events:auto}
+.fc-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(8,8,15,.55),rgba(139,26,26,.18));display:flex;align-items:center;justify-content:center;transition:opacity .3s}
+.fc.playing .fc-overlay{opacity:0;pointer-events:none}
+.play-circle{width:58px;height:58px;border-radius:50%;background:rgba(201,168,76,.88);display:flex;align-items:center;justify-content:center;transition:transform .25s,background .25s}
+.fc:hover .play-circle{transform:scale(1.08);background:var(--gold2)}
+.play-circle svg{width:20px;height:20px;fill:#08080f;margin-left:4px}
+.fc-body{padding:22px 26px 26px;border-top:1px solid var(--border)}
+.fc-meta-row{display:flex;align-items:center;gap:6px;margin-bottom:8px;flex-wrap:wrap}
+.fc-yr{font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;padding:2px 8px;border:1px solid var(--border2);color:var(--muted)}
+.fc-title{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--white);font-weight:700;margin-bottom:2px;line-height:1.25}
+.fc-dir{font-size:.7rem;color:var(--gold);letter-spacing:.08em;margin-bottom:10px}
+.fc-desc{font-size:.83rem;color:var(--muted);line-height:1.7}
+.fc-impact{margin-top:12px;padding:11px 14px;background:rgba(201,168,76,.04);border-left:2px solid var(--gold-dim);font-size:.77rem;color:var(--text);font-style:italic;line-height:1.58}
+.fc-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:12px}
+.fc-tag{font-size:.59rem;letter-spacing:.09em;text-transform:uppercase;padding:3px 10px;border:1px solid var(--border2);color:var(--muted)}
+
+/* RATINGS */
+.fc-ratings{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap}
+.rating-badge{display:flex;align-items:center;gap:5px;padding:4px 10px;border:1px solid var(--border2);font-size:.68rem;letter-spacing:.05em;font-weight:500}
+.rating-badge.imdb{color:#f5c518;border-color:rgba(245,197,24,.25);background:rgba(245,197,24,.05)}
+.rating-badge.rt-fresh{color:#fa320a;border-color:rgba(250,50,10,.25);background:rgba(250,50,10,.05)}
+.rating-badge.rt-certified{color:#f36000;border-color:rgba(243,96,0,.25);background:rgba(243,96,0,.05)}
+.rating-badge svg{width:13px;height:13px;flex-shrink:0}
+
+/* IMPACT */
+.impact-section{background:var(--black);border-top:1px solid var(--border)}
+.impact-intro{max-width:680px;margin:0 auto 64px;text-align:center}
+.impact-intro p{font-size:.92rem;color:var(--text);line-height:1.85}
+.impact-intro p.lead{font-family:'Playfair Display',serif;font-size:1.1rem;font-style:italic;color:var(--white);margin-bottom:14px}
+.impact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.ic{background:var(--surface);border:1px solid var(--border);padding:36px 30px;position:relative;overflow:hidden;transition:border-color .3s}
+.ic::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(to right,var(--gold),transparent);transform:scaleX(0);transform-origin:left;transition:transform .45s}
+.ic:hover{border-color:var(--border2)}
+.ic:hover::before{transform:scaleX(1)}
+.ic-icon{font-size:2.1rem;margin-bottom:20px;display:block}
+.ic-title{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.06em;color:var(--white);margin-bottom:12px}
+.ic-text{font-size:.85rem;color:var(--muted);line-height:1.72}
+.ic-stat{display:inline-block;margin-top:18px;font-family:'Bebas Neue',sans-serif;font-size:1.9rem;color:var(--gold);letter-spacing:.05em}
+.ic-stat-lbl{font-size:.62rem;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);display:block}
+
+/* QUOTE BAND */
+.qband{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:72px 20px;text-align:center;overflow:hidden;position:relative}
+.qband::before{content:'"';position:absolute;top:-40px;left:50%;transform:translateX(-50%);font-family:'Playfair Display',serif;font-size:22rem;color:rgba(201,168,76,.04);line-height:1;pointer-events:none}
+.q-text{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(1.2rem,3.5vw,1.9rem);color:var(--white);max-width:800px;margin:0 auto 20px;line-height:1.58;position:relative}
+.q-attr{font-size:.68rem;letter-spacing:.3em;text-transform:uppercase;color:var(--gold)}
+
+/* DIRECTORS */
+.directors-section{background:var(--deep);border-top:1px solid var(--border)}
+.directors-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;margin-top:52px}
+.dc{background:var(--card);border:1px solid var(--border);padding:40px 36px;position:relative;overflow:hidden;transition:border-color .3s}
+.dc:hover{border-color:rgba(201,168,76,.28)}
+.dc-num{position:absolute;top:28px;right:32px;font-family:'Bebas Neue',sans-serif;font-size:3.6rem;color:rgba(201,168,76,.05);line-height:1}
+.dc-name{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.06em;color:var(--white);margin-bottom:4px}
+.dc-tag{font-size:.67rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:18px;display:block}
+.dc-bio{font-size:.87rem;color:var(--muted);line-height:1.78;margin-bottom:20px}
+.dc-films{display:flex;flex-wrap:wrap;gap:5px}
+.dc-film{font-size:.62rem;letter-spacing:.09em;text-transform:uppercase;padding:3px 10px;border:1px solid var(--border2);color:var(--muted)}
+
+/* FAVORITES */
+.fav-section{padding:80px 0;background:linear-gradient(180deg,var(--black) 0%,var(--deep) 100%);border-top:1px solid var(--border)}
+.fav-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;margin-top:56px}
+.fav-card{background:var(--card);border:1px solid var(--border);overflow:hidden;transition:border-color .35s;cursor:pointer}
+.fav-card:hover{border-color:rgba(201,168,76,.38)}
+.fav-vid{position:relative;aspect-ratio:16/9;background:#000;overflow:hidden}
+.fav-vid iframe{width:100%;height:100%;display:block;border:none;pointer-events:none}
+.fav-card.playing .fav-vid iframe{pointer-events:auto}
+.fav-ov{position:absolute;inset:0;background:rgba(0,0,0,.38);display:flex;align-items:center;justify-content:center;transition:opacity .3s}
+.fav-card.playing .fav-ov{opacity:0;pointer-events:none}
+.fav-play{width:50px;height:50px;border-radius:50%;background:rgba(201,168,76,.85);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.fav-play svg{width:17px;height:17px;fill:#08080f;margin-left:3px}
+.fav-info{padding:28px 30px 32px}
+.fav-person{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.fav-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--gold-dim),var(--gold));display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:600;color:#08080f;flex-shrink:0}
+.fav-pname{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);display:block}
+.fav-ptag{font-size:.62rem;color:var(--muted);letter-spacing:.08em}
+.fav-ftitle{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--white);font-weight:700;margin-bottom:3px;line-height:1.2}
+.fav-fmeta{font-size:.7rem;color:var(--gold);letter-spacing:.09em;margin-bottom:12px}
+.fav-fdesc{font-size:.82rem;color:var(--muted);line-height:1.7}
+.fav-fq{margin-top:14px;padding:11px 14px;border-left:2px solid var(--gold-dim);font-style:italic;font-size:.78rem;color:var(--text);line-height:1.58}
+.fav-card.full{grid-column:1/-1}
+
+/* CONCLUSION */
+.conclusion-section{padding:80px 0;background:var(--black);border-top:1px solid var(--border)}
+.concl-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.2rem,7vw,4.5rem);letter-spacing:.04em;color:var(--white);line-height:.95;margin-bottom:40px}
+.concl-body{max-width:880px}
+.concl-body p{font-size:.93rem;color:var(--text);line-height:1.85;margin-bottom:18px}
+.concl-body p.lead{font-family:'Playfair Display',serif;font-size:1.05rem;font-style:italic;color:var(--white);margin-bottom:24px}
+.refs{background:var(--surface);border:1px solid var(--border);padding:36px 40px;margin-top:52px}
+.refs-title{font-family:'Bebas Neue',sans-serif;font-size:1.35rem;letter-spacing:.1em;color:var(--gold);margin-bottom:22px}
+.ref{font-size:.82rem;color:var(--muted);line-height:1.7;margin-bottom:9px;padding-left:18px;position:relative}
+.ref::before{content:'—';position:absolute;left:0;color:var(--gold-dim)}
+
+/* FOOTER */
+footer{background:var(--deep);border-top:1px solid var(--border);padding:56px 20px 36px;text-align:center}
+.ft-logo{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.28em;color:var(--gold);margin-bottom:10px}
+.ft-members{display:flex;justify-content:center;gap:28px;margin:20px 0;flex-wrap:wrap}
+.ft-member{font-size:.7rem;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)}
+.ft-member span{color:var(--text)}
+.ft-copy{font-size:.68rem;color:var(--border2);letter-spacing:.09em;margin-top:14px}
+
+/* REVEAL */
+.rv{opacity:0;transform:translateY(36px);transition:opacity .75s cubic-bezier(.16,1,.3,1),transform .75s cubic-bezier(.16,1,.3,1)}
+.rv.in{opacity:1;transform:none}
+.rv.left{transform:translateX(-36px)}
+.rv.right{transform:translateX(36px)}
+.rv.in{transform:none}
+.d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.24s}.d4{transition-delay:.32s}
+.count-up{display:inline-block}
+
+/* ── MOBILE ── */
+@media(max-width:768px){
+  nav{padding:0 16px;height:56px}
+  .nav-links{display:none}
+  .nav-menu-btn{display:flex}
+  section{padding:60px 0}
+  .scorsese-grid{grid-template-columns:1fr;gap:36px}
+  .impact-grid{grid-template-columns:1fr}
+  .directors-grid{grid-template-columns:1fr}
+  .fav-grid{grid-template-columns:1fr}
+  .fav-card.full{grid-column:auto}
+  .films-grid{grid-template-columns:1fr}
+  .tl-wrap::before{left:26px}
+  .tl-item{grid-template-columns:52px 1fr}
+  .tl-item:nth-child(odd) .tl-box,
+  .tl-item:nth-child(even) .tl-box{grid-column:2;text-align:left;padding-left:20px;padding-right:0}
+  .tl-item:nth-child(odd) .tl-dot,
+  .tl-item:nth-child(even) .tl-dot{grid-column:1;grid-row:1}
+  .tl-item:nth-child(odd) .tl-empty,
+  .tl-item:nth-child(even) .tl-empty{display:none}
+  .tl-dot{width:52px;height:52px}
+  .refs{padding:24px 20px}
+  .ft-members{gap:16px}
+  .qband{padding:56px 20px}
+  .qband::before{font-size:14rem;top:-20px}
+}
+@media(max-width:480px){
+  .hero-title{font-size:clamp(3rem,17vw,5rem)}
+  .filter-row{gap:4px}
+  .fbtn{font-size:.6rem;padding:6px 12px}
+  .fc-body{padding:18px 18px 20px}
+  .ic{padding:28px 22px}
+  .dc{padding:28px 24px}
+  .fav-info{padding:20px 20px 24px}
+  .dur-badge{font-size:.6rem;padding:7px 14px}
+}
+@media(min-width:769px) and (max-width:1024px){
+  .scorsese-grid{grid-template-columns:1fr 340px;gap:40px}
+  .impact-grid{grid-template-columns:1fr 1fr}
+  .films-grid{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" id="mobileClose">✕</button>
+  <a href="#scorsese" onclick="closeMob()">Scorsese</a>
+  <a href="#historia" onclick="closeMob()">História</a>
+  <a href="#filmes" onclick="closeMob()">Filmes</a>
+  <a href="#impacto" onclick="closeMob()">Impacto</a>
+  <a href="#realizadores" onclick="closeMob()">Realizadores</a>
+  <a href="#favoritos" onclick="closeMob()">Os Nossos</a>
+  <a href="#conclusao" onclick="closeMob()">Conclusão</a>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo"><div class="nav-logo-dot"></div>Cinema & Sociedade</div>
+  <ul class="nav-links">
+    <li><a href="#scorsese">Scorsese</a></li>
+    <li><a href="#historia">História</a></li>
+    <li><a href="#filmes">Filmes</a></li>
+    <li><a href="#impacto">Impacto</a></li>
+    <li><a href="#realizadores">Realizadores</a></li>
+    <li><a href="#favoritos">Os Nossos</a></li>
+    <li><a href="#conclusao">Conclusão</a></li>
+  </ul>
+  <button class="nav-menu-btn" id="menuBtn" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-bg"></div>
+  <div class="filmstrip"></div>
+  <div class="filmstrip filmstrip-b"></div>
+  <div id="particles"></div>
+  <div class="hero-eye rv">Trabalho AI · 2026</div>
+  <h1 class="hero-title">
+    <span class="rv d1">O Impacto do</span><br>
+    <span class="shine rv d2">Cinema</span><br>
+    <span class="rv d3">na Sociedade</span>
+  </h1>
+  <p class="hero-sub rv d3">Uma viagem pelas obras que definiram gerações e transformaram o mundo</p>
+  <div class="hero-yr rv d4">Desde 1895 · A Sétima Arte</div>
+  <div class="scroll-hint"><span>Explorar</span><div class="scroll-hint-line"></div></div>
+</section>
+
+<!-- SCORSESE -->
+<section class="scorsese-section" id="scorsese">
+  <div class="container">
+    <div class="scorsese-grid">
+      <div class="rv left">
+        <div class="s-eye">O Ponto de Partida</div>
+        <h2 class="s-title">O que Faz<br>o Cinema?</h2>
+        <div class="s-divider" style="margin-bottom:28px"></div>
+        <p class="lead">Ninguém respondeu melhor a esta pergunta do que Martin Scorsese — um dos maiores cineastas de todos os tempos e a voz que abre esta apresentação.</p>
+        <p>Scorsese dedicou a sua vida a desvendar o que torna o cinema uma forma de arte singular. Para ele, o cinema não é apenas entretenimento: é memória, é empatia, é a capacidade única de nos colocar dentro da mente e do coração de outro ser humano.</p>
+        <p>Esta monologia de abertura define o espírito de toda a nossa análise. O cinema que estudamos não é apenas o que diverte — é o que perturba, questiona e permanece muito depois de se acenderem as luzes.</p>
+        <div class="dur-badge">Duração · 2 minutos</div>
+      </div>
+      <div class="rv right">
+        <div class="vid-frame">
+          <iframe src="https://www.youtube.com/embed/FOlBqLMJhU4?rel=0&modestbranding=1" title="Martin Scorsese — O que faz o Cinema" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          <div class="vid-label"><span>Martin Scorsese — O que faz o Cinema</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section class="timeline-section" id="historia">
+  <div class="container">
+    <div class="s-header-center rv">
+      <div class="s-eye">Contextualização Histórica</div>
+      <h2 class="s-title">130 Anos de Cinema<br>e Transformação Social</h2>
+      <div class="s-divider"></div>
+    </div>
+    <div class="tl-wrap">
+      <div class="tl-item rv">
+        <div class="tl-box"><div class="tl-yr">1895</div><div class="tl-ttl">O Nascimento da Sétima Arte</div><div class="tl-desc">Os irmãos Lumière projetam as primeiras imagens em movimento em Paris. O público foge ao ver o comboio a aproximar-se. Nasce o cinema — e com ele, um novo modo de ver o mundo.</div></div>
+        <div class="tl-dot">1895</div>
+        <div class="tl-empty"></div>
+      </div>
+      <div class="tl-item rv">
+        <div class="tl-empty"></div>
+        <div class="tl-dot">1915</div>
+        <div class="tl-box"><div class="tl-yr">1915</div><div class="tl-ttl">O Cinema como Arma Política</div><div class="tl-desc">«The Birth of a Nation» prova que o cinema pode ser usado como propaganda com consequências reais na sociedade. O poder da imagem ficou irrevogavelmente demonstrado — para o bem e para o mal.</div></div>
+      </div>
+      <div class="tl-item rv">
+        <div class="tl-box"><div class="tl-yr">1927</div><div class="tl-ttl">O Som Chega à Tela</div><div class="tl-desc">«The Jazz Singer» transforma a indústria. O cinema sonoro não é apenas uma inovação técnica — é uma revolução cultural que aproxima ainda mais o espetador das histórias e das personagens.</div></div>
+        <div class="tl-dot">1927</div>
+        <div class="tl-empty"></div>
+      </div>
+      <div class="tl-item rv">
+        <div class="tl-empty"></div>
+        <div class="tl-dot">1942</div>
+        <div class="tl-box"><div class="tl-yr">1942</div><div class="tl-ttl">Hollywood em Guerra</div><div class="tl-desc">Durante a Segunda Guerra Mundial, o cinema torna-se instrumento central de moral e coesão nacional. «Casablanca» estreia e fala diretamente à dor e esperança de um mundo em conflito.</div></div>
+      </div>
+      <div class="tl-item rv">
+        <div class="tl-box"><div class="tl-yr">1960s</div><div class="tl-ttl">A Nova Vaga e a Contracultura</div><div class="tl-desc">Godard, Truffaut e a Nouvelle Vague reinventam a linguagem cinematográfica. Hollywood rompe com os seus tabus. O cinema torna-se voz da geração que desafia a ordem estabelecida.</div></div>
+        <div class="tl-dot">60s</div>
+        <div class="tl-empty"></div>
+      </div>
+      <div class="tl-item rv">
+        <div class="tl-empty"></div>
+        <div class="tl-dot">1972</div>
+        <div class="tl-box"><div class="tl-yr">1972</div><div class="tl-ttl">O Padrinho e a Era de Ouro</div><div class="tl-desc">Coppola, Scorsese, Kubrick e Spielberg inauguram a era de ouro de Hollywood. «The Godfather» prova que o cinema popular pode ter a profundidade da grande literatura.</div></div>
+      </div>
+      <div class="tl-item rv">
+        <div class="tl-box"><div class="tl-yr">1994</div><div class="tl-ttl">O Ano que Mudou Tudo</div><div class="tl-desc">«Pulp Fiction» e «The Shawshank Redemption» estreiam no mesmo ano. O cinema independente explode. Tarantino reinventa a gramática cinematográfica. A era dos géneros morre e renasce em simultâneo.</div></div>
+        <div class="tl-dot">1994</div>
+        <div class="tl-empty"></div>
+      </div>
+      <div class="tl-item rv">
+        <div class="tl-empty"></div>
+        <div class="tl-dot">2019</div>
+        <div class="tl-box"><div class="tl-yr">2019</div><div class="tl-ttl">Parasite e a Queda das Fronteiras</div><div class="tl-desc">«Parasite» vence o Óscar de Melhor Filme — o primeiro não anglófono a fazê-lo. Uma rutura histórica: o cinema mundial afirma a sua paridade com Hollywood e o mundo perde a desculpa das legendas.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FILMS -->
+<section class="films-section" id="filmes">
+  <div class="container">
+    <div class="rv" style="margin-bottom:48px">
+      <div class="s-eye">Seleção</div>
+      <h2 class="s-title">Filmes que Marcaram<br>a Humanidade</h2>
+      <div class="s-divider"></div>
+    </div>
+    <div class="filter-row rv">
+      <button class="fbtn active" data-filter="all">Todos</button>
+      <button class="fbtn" data-filter="scorsese">Scorsese</button>
+      <button class="fbtn" data-filter="tarantino">Tarantino</button>
+      <button class="fbtn" data-filter="guerra">Guerra</button>
+      <button class="fbtn" data-filter="crime">Crime</button>
+      <button class="fbtn" data-filter="classico">Clássico</button>
+    </div>
+    <div class="films-grid" id="filmsGrid">
+
+      <!-- 12 ANGRY MEN -->
+      <div class="fc rv" data-tags="crime classico" onclick="playFilm(this)">
+        <div class="fc-vid">
+          <iframe src="https://www.youtube.com/embed/TEN-2uTi2c0?rel=0&modestbranding=1" title="12 Angry Men" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          <div class="fc-overlay"><div class="play-circle"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+        </div>
+        <div class="fc-body">
+          <div class="fc-meta-row"><span class="fc-yr">1957</span></div>
+          <div class="fc-title">12 Angry Men</div>
+          <div class="fc-dir">Sidney Lumet</div>
+          <p class="fc-desc">Doze jurados, uma sala fechada, um adolescente acusado de assassínio. Um estudo magistral sobre preconceito, responsabilidade cívica e como uma única voz corajosa pode mudar o rumo da justiça. Filmado quase inteiramente num único espaço fechado — e mais intenso do que qualquer blockbuster.</p>
+          <div class="fc-impact">💬 Usado em escolas de Direito em todo o mundo até hoje. O filme mais importante sobre democracia alguma vez rodado.</div>
+          <div class="fc-ratings">
+            <div class="rating-badge imdb"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 2h16a2 2 0 012 2v16a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2zm2 4v12h2.5V6H6zm4 0v12h2.5V6H10zm5.5 0L14 12l1.5 6H18l1.5-6L18 6h-2.5z"/></svg>IMDb 9.0</div>
+            <div class="rating-badge rt-certified"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>RT 100%</div>
+          </div>
+          <div class="fc-tags"><span class="fc-tag">Justiça</span><span class="fc-tag">Democracia</span><span class="fc-tag">Clássico</span></div>
+        </div>
+      </div>
+
+      <!-- THE GODFATHER -->
+      <div class="fc rv" data-tags="crime classico" onclick="playFilm(this)">
+        <div class="fc-vid">
+          <iframe src="https://www.youtube.com/embed/1x0GpEZnwa8?rel=0&modestbranding=1" title="The Godfather" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          <div class="fc-overlay"><div class="play-circle"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+        </div>
+        <div class="fc-body">
+          <div class="fc-meta-row"><span class="fc-yr">1972</span></div>
+          <div class="fc-title">The Godfather</div>
+          <div class="fc-dir">Francis Ford Coppola</div>
+          <p class="fc-desc">A saga da família Corleone redefiniu o crime como tragédia grega americana. Uma obra que dissecou poder, lealdade e corrupção moral com profundidade sem precedentes. Frequentemente eleito o maior filme da história do cinema.</p>
+          <div class="fc-impact">💬 Reinventou a narrativa cinematográfica. Mais de 50 anos depois, cada thriller político cita-o, conscientemente ou não.</div>
+          <div class="fc-ratings">
+            <div class="rating-badge imdb"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 2h16a2 2 0 012 2v16a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2zm2 4v12h2.5V6H6zm4 0v12h2.5V6H10zm5.5 0L14 12l1.5 6H18l1.5-6L18 6h-2.5z"/></svg>IMDb 9.2</div>
+            <div class="rating-badge rt-certified"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>RT 97%</div>
+          </div>
+          <div class="fc-tags"><span class="fc-tag">Crime</span><span class="fc-tag">Poder</span><span class="fc-tag">América</span></div>
+        </div>
+      </div>
+
+      <div class="fc rv" data-tags="crime scorsese" onclick="playFilm(this)">
+        <div class="fc-vid">
+          <iframe src="https://www.youtube.com/embed/2ilzidi_J8Q?rel=0&modestbranding=1" title="Goodfellas" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          <div class="fc-overlay"><div class="play-circle"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+        </div>
+        <div class="fc-body">
+          <div class="fc-meta-row"><span class="fc-yr">1990</span></div>
+          <div class="fc-title">Goodfellas</div>
+          <div class="fc-dir">Martin Scorsese</div>
+          <p class="fc-desc">A glorificação e destruição do sonho americano em simultâneo. O plano-sequência do Copacabana é um dos maiores da história do cinema. Scorsese desmontou o romance da máfia com um ritmo frenético que influenciou toda uma geração de cineastas.</p>
+          <div class="fc-impact">💬 O famoso plano-sequência de 3 minutos foi filmado num único dia, sem cortes. Ray Liotta foi rejeitado por 11 produtoras antes de Scorsese o aceitar.</div>
+          <div class="fc-ratings">
+            <div class="rating-badge imdb"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 2h16a2 2 0 012 2v16a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2zm2 4v12h2.5V6H6zm4 0v12h2.5V6H10zm5.5 0L14 12l1.5 6H18l1.5-6L18 6h-2.5z"/></svg>IMDb 8.7</div>
+            <div class="rating-badge rt-certified"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>RT 93%</div>
+          </div>
+          <div class="fc-tags"><span class="fc-tag">Máfia</span><span class="fc-tag">Scorsese</span><span class="fc-tag">Sonho Americano</span></div>
+        </div>
+      </div>
+
+      <!-- SCHINDLER'S LIST -->
+      <div class="fc rv" data-tags="guerra classico" onclick="playFilm(this)">
+        <div class="fc-vid">
+          <iframe src="https://www.youtube.com/embed/gG22XNhtnoY?rel=0&modestbranding=1" title="Schindler's List" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          <div class="fc-overlay"><div class="play-circle"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+        </div>
+        <div class="fc-body">
+          <div class="fc-meta-row"><span class="fc-yr">1993</span></div>
+          <div class="fc-title">Schindler's List</div>
+          <div class="fc-dir">Steven Spielberg</div>
+          <p class="fc-desc">A obra-prima de Spielberg sobre o Holocausto tornou-se a ferramenta educativa mais poderosa sobre o genocídio Nazi. A rapariga de casaco vermelho é um dos momentos mais perturbadores de toda a história do cinema.</p>
+          <div class="fc-impact">💬 Spielberg doou os lucros à Shoah Foundation para preservar testemunhos de sobreviventes. O impacto vai muito além do ecrã.</div>
+          <div class="fc-ratings">
+            <div class="rating-badge imdb"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 2h16a2 2 0 012 2v16a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2zm2 4v12h2.5V6H6zm4 0v12h2.5V6H10zm5.5 0L14 12l1.5 6H18l1.5-6L18 6h-2.5z"/></svg>IMDb 9.0</div>
+            <div class="rating-badge rt-certified"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>RT 98%</div>
+          </div>
+          <div class="fc-tags"><span class="fc-tag">Holocausto</span><span class="fc-tag">Memória</span><span class="fc-tag">História</span></div>
+        </div>
+      </div>
+
+      <!-- TAXI DRIVER -->
+      <div class="fc rv" data-tags="crime scorsese" onclick="playFilm(this)">
+        <div class="fc-vid">
+          <iframe src="https://www.youtube.com/embed/T5IligQP7Fo?rel=0&modestbranding=1" title="Taxi Driver" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          <div class="fc-overlay"><div class="play-circle"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+        </div>
+        <div class="fc-body">
+          <div class="fc-meta-row"><span class="fc-yr">1976</span></div>
+          <div class="fc-title">Taxi Driver</div>
+          <div class="fc-dir">Martin Scorsese</div>
+          <p class="fc-desc">O retrato brutal de um veterano do Vietname à beira do colapso numa Nova Iorque degradada. Travis Bickle tornou-se a encarnação do alienado urbano — e o filme inspirou uma tentativa real de assassínio ao Presidente Reagan em 1981.</p>
+          <div class="fc-impact">💬 "You talkin' to me?" foi improvisado por De Niro. Nenhum filme retratou a solidão urbana de forma tão visceral.</div>
+          <div class="fc-ratings">
+            <div class="rating-badge imdb"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 2h16a2 2 0 012 2v16a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2zm2 4v12h2.5V6H6zm4 0v12h2.5V6H10zm5.5 0L14 12l1.5 6H18l1.5-6L18 6h-2.5z"/></svg>IMDb 8.2</div>
+            <div class="rating-badge rt-certified"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>RT 89%</div>
+          </div>
+          <div class="fc-tags"><span class="fc-tag">Alienação</span><span class="fc-tag">Psicologia</span><span class="fc-tag">Scorsese</span></div>
+        </div>
+      </div>
+
+      <!-- PULP FICTION -->
+      <div class="fc rv" data-tags="crime tarantino" onclick="playFilm(this)">
+        <div class="fc-vid">
+          <iframe src="https://www.youtube.com/embed/5ZAhzsi1ybM?rel=0&modestbranding=1" title="Pulp Fiction" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          <div class="fc-overlay"><div class="play-circle"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+        </div>
+        <div class="fc-body">
+          <div class="fc-meta-row"><span class="fc-yr">1994</span></div>
+          <div class="fc-title">Pulp Fiction</div>
+          <div class="fc-dir">Quentin Tarantino</div>
+          <p class="fc-desc">Tarantino reinventou a gramática do cinema com esta obra desconstruída e irreverente. A sua influência na linguagem cinematográfica e na cultura popular dos anos 90 é incalculável — dividiu a história do cinema num antes e depois.</p>
+          <div class="fc-impact">💬 Produzido com 8 milhões, gerou 213 milhões. Resgatou a carreira de John Travolta e criou uma nova gramática para o cinema independente.</div>
+          <div class="fc-ratings">
+            <div class="rating-badge imdb"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 2h16a2 2 0 012 2v16a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2zm2 4v12h2.5V6H6zm4 0v12h2.5V6H10zm5.5 0L14 12l1.5 6H18l1.5-6L18 6h-2.5z"/></svg>IMDb 8.9</div>
+            <div class="rating-badge rt-certified"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>RT 92%</div>
+          </div>
+          <div class="fc-tags"><span class="fc-tag">Neo-noir</span><span class="fc-tag">Cultura Pop</span><span class="fc-tag">Tarantino</span></div>
+        </div>
+      </div>
+
+      <!-- SEVEN -->
+      <div class="fc rv" data-tags="crime" onclick="playFilm(this)">
+        <div class="fc-vid">
+          <iframe src="https://www.youtube.com/embed/KPOuJGkpblk?rel=0&modestbranding=1" title="Seven" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          <div class="fc-overlay"><div class="play-circle"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+        </div>
+        <div class="fc-body">
+          <div class="fc-meta-row"><span class="fc-yr">1995</span></div>
+          <div class="fc-title">Se7en</div>
+          <div class="fc-dir">David Fincher</div>
+          <p class="fc-desc">Dois detectives perseguem um assassino em série que usa os Sete Pecados Capitais como molde dos seus crimes. Fincher construiu uma das atmosferas mais opressivas do cinema moderno — escuro, claustrofóbico, e com um final que ninguém esquece.</p>
+          <div class="fc-impact">💬 "What's in the box?" é uma das últimas falas mais perturbadoras da história do cinema. O final foi quase vetado pelos estúdios — Fincher recusou-se a mudá-lo.</div>
+          <div class="fc-ratings">
+            <div class="rating-badge imdb"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 2h16a2 2 0 012 2v16a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 01-2-2V4a2 2 0 012-2zm2 4v12h2.5V6H6zm4 0v12h2.5V6H10zm5.5 0L14 12l1.5 6H18l1.5-6L18 6h-2.5z"/></svg>IMDb 8.6</div>
+            <div class="rating-badge rt-certified"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>RT 84%</div>
+          </div>
+          <div class="fc-tags"><span class="fc-tag">Thriller</span><span class="fc-tag">Crime</span><span class="fc-tag">Fincher</span></div>
+        </div>
+      </div>
+
+      <!-- NO COUNTRY -->
+      <div class="fc rv" data-tags="crime" onclick="playFilm(this)">
+        <div class="fc-vid">
+          <iframe src="https://www.youtube.com/embed/38A__WT3-o0?rel=0&modestbranding=1" title="No Country for Old Men" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          <div class="fc-overlay"><div class="play-circle"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+        </div>
+        <div class="fc-body">
+          <div class="fc-meta-row"><span class="fc-yr">2007</span></div>
+          <div class="fc-title">No Country for Old Men</div>
+          <div class="fc-dir">Joel & Ethan Coen</div>
+          <p class="fc-desc">Uma meditação sobre o mal na sua forma mais pura. Anton Chigurh tornou-se o villão mais assustador da história do cinema moderno — não por ser monstruoso, mas por ser metódico, filosófico e absolutamente inevitável como o destino.</p>
+          <div class="fc-impact">💬 A cena da moeda é um dos momentos mais perturbadores do cinema moderno. O mal não é caótico — é sistemático. E isso é o que nos apavora.</div>
+          <div class="fc-ratings">
+            <div class="rating-badge imdb"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 2h16a2 2 0 012 2v16a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2zm2 4v12h2.5V6H6zm4 0v12h2.5V6H10zm5.5 0L14 12l1.5 6H18l1.5-6L18 6h-2.5z"/></svg>IMDb 8.2</div>
+            <div class="rating-badge rt-certified"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>RT 93%</div>
+          </div>
+          <div class="fc-tags"><span class="fc-tag">Thriller</span><span class="fc-tag">Fatalidade</span><span class="fc-tag">Coen</span></div>
+        </div>
+      </div>
+
+      <!-- SHAWSHANK -->
+      <div class="fc rv" data-tags="crime" onclick="playFilm(this)">
+        <div class="fc-vid">
+          <iframe src="https://www.youtube.com/embed/NmzuHjWmXOc?rel=0&modestbranding=1" title="The Shawshank Redemption" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          <div class="fc-overlay"><div class="play-circle"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+        </div>
+        <div class="fc-body">
+          <div class="fc-meta-row"><span class="fc-yr">1994</span></div>
+          <div class="fc-title">The Shawshank Redemption</div>
+          <div class="fc-dir">Frank Darabont</div>
+          <p class="fc-desc">A história de redenção e esperança mais amada do cinema — #1 no IMDb há mais de duas décadas. Ignorada nos Óscares, redescoberta em VHS, nunca mais esquecida. A cena de Andy a abrir os braços à chuva é a imagem de liberdade mais reconhecida do cinema moderno.</p>
+          <div class="fc-impact">💬 Falhou na bilheteira mas virou fenómeno cultural eterno. Prova de que o público, mais do que a crítica, decide o que fica para sempre.</div>
+          <div class="fc-ratings">
+            <div class="rating-badge imdb"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 2h16a2 2 0 012 2v16a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2zm2 4v12h2.5V6H6zm4 0v12h2.5V6H10zm5.5 0L14 12l1.5 6H18l1.5-6L18 6h-2.5z"/></svg>IMDb 9.3</div>
+            <div class="rating-badge rt-certified"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>RT 89%</div>
+          </div>
+          <div class="fc-tags"><span class="fc-tag">Esperança</span><span class="fc-tag">Redenção</span><span class="fc-tag">Liberdade</span></div>
+        </div>
+      </div>
+
+      <!-- PARASITE -->
+      <div class="fc rv" data-tags="crime" onclick="playFilm(this)">
+        <div class="fc-vid">
+          <iframe src="https://www.youtube.com/embed/isOGD_7hNIY?rel=0&modestbranding=1" title="Parasite" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          <div class="fc-overlay"><div class="play-circle"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+        </div>
+        <div class="fc-body">
+          <div class="fc-meta-row"><span class="fc-yr">2019</span></div>
+          <div class="fc-title">Parasite</div>
+          <div class="fc-dir">Bong Joon-ho</div>
+          <p class="fc-desc">O primeiro filme não anglófono a vencer o Óscar de Melhor Filme. Uma sátira feroz à desigualdade de classes que gerou debates globais — e provou definitivamente que legendas não são barreira para a empatia humana.</p>
+          <div class="fc-impact">💬 "Superem a barreira de uma polegada das legendas e terão acesso a filmes incríveis." Bong Joon-ho no Globo de Ouro. O mundo ouviu.</div>
+          <div class="fc-ratings">
+            <div class="rating-badge imdb"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 2h16a2 2 0 012 2v16a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2zm2 4v12h2.5V6H6zm4 0v12h2.5V6H10zm5.5 0L14 12l1.5 6H18l1.5-6L18 6h-2.5z"/></svg>IMDb 8.5</div>
+            <div class="rating-badge rt-certified"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>RT 99%</div>
+          </div>
+          <div class="fc-tags"><span class="fc-tag">Classes Sociais</span><span class="fc-tag">Coreia</span><span class="fc-tag">Globalismo</span></div>
+        </div>
+      </div>
+
+      <!-- 12 YEARS A SLAVE -->
+      <div class="fc rv" data-tags="guerra" onclick="playFilm(this)">
+        <div class="fc-vid">
+          <iframe src="https://www.youtube.com/embed/z02Ie8wKKRg?rel=0&modestbranding=1" title="12 Years a Slave" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          <div class="fc-overlay"><div class="play-circle"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+        </div>
+        <div class="fc-body">
+          <div class="fc-meta-row"><span class="fc-yr">2013</span></div>
+          <div class="fc-title">12 Years a Slave</div>
+          <div class="fc-dir">Steve McQueen</div>
+          <p class="fc-desc">A representação mais devastadora e honesta da escravatura alguma vez comprometida ao ecrã. Reacendeu o debate sobre o racismo sistémico e a memória histórica do Ocidente de uma forma que nenhum livro de história conseguiu.</p>
+          <div class="fc-impact">💬 O silêncio de Lupita Nyong'o dura 24 segundos. É o mais longo e doloroso silêncio na história do cinema moderno. Não é preciso dizer mais nada.</div>
+          <div class="fc-ratings">
+            <div class="rating-badge imdb"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 2h16a2 2 0 012 2v16a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2zm2 4v12h2.5V6H6zm4 0v12h2.5V6H10zm5.5 0L14 12l1.5 6H18l1.5-6L18 6h-2.5z"/></svg>IMDb 8.1</div>
+            <div class="rating-badge rt-certified"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>RT 95%</div>
+          </div>
+          <div class="fc-tags"><span class="fc-tag">Escravatura</span><span class="fc-tag">Racismo</span><span class="fc-tag">Direitos Humanos</span></div>
+        </div>
+      </div>
+
+      <!-- INGLOURIOUS BASTERDS -->
+      <div class="fc rv" data-tags="guerra tarantino" onclick="playFilm(this)">
+        <div class="fc-vid">
+          <iframe src="https://www.youtube.com/embed/qRYDNWXuip8?rel=0&modestbranding=1" title="Inglourious Basterds" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          <div class="fc-overlay"><div class="play-circle"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+        </div>
+        <div class="fc-body">
+          <div class="fc-meta-row"><span class="fc-yr">2009</span></div>
+          <div class="fc-title">Inglourious Basterds</div>
+          <div class="fc-dir">Quentin Tarantino</div>
+          <p class="fc-desc">Tarantino revisita a Segunda Guerra Mundial com ficção alternativa. Hans Landa é o maior villão do cinema moderno — não por brutalidade, mas por elegância. O final reescreve a história e pergunta: e se o cinema pudesse mudar o passado?</p>
+          <div class="fc-impact">💬 Christoph Waltz aprendeu o guião em quatro línguas para a audição. Ganhou o Óscar. Tarantino disse que este era o seu filme favorito de todos.</div>
+          <div class="fc-ratings">
+            <div class="rating-badge imdb"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 2h16a2 2 0 012 2v16a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2zm2 4v12h2.5V6H6zm4 0v12h2.5V6H10zm5.5 0L14 12l1.5 6H18l1.5-6L18 6h-2.5z"/></svg>IMDb 8.4</div>
+            <div class="rating-badge rt-certified"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>RT 89%</div>
+          </div>
+          <div class="fc-tags"><span class="fc-tag">WWII</span><span class="fc-tag">Revisionismo</span><span class="fc-tag">Tarantino</span></div>
+        </div>
+      </div>
+
+      
+      
+
+      <!-- THE DEPARTED -->
+      <div class="fc rv" data-tags="crime scorsese" onclick="playFilm(this)">
+        <div class="fc-vid">
+          <iframe src="https://www.youtube.com/embed/r-MiSNsCdQ4?rel=0&modestbranding=1" title="The Departed" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          <div class="fc-overlay"><div class="play-circle"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+        </div>
+        <div class="fc-body">
+          <div class="fc-meta-row"><span class="fc-yr">2006</span></div>
+          <div class="fc-title">The Departed</div>
+          <div class="fc-dir">Martin Scorsese</div>
+          <p class="fc-desc">O thriller de identidade que finalmente deu a Scorsese o seu Óscar. Quem é o polícia? Quem é o criminoso? Quando a identidade é uma máscara, o sistema entra em colapso — e Scorsese filma esse colapso com brutalidade cirúrgica.</p>
+          <div class="fc-impact">💬 Scorsese disse que só fez o filme para "se divertir". Ganhou Melhor Filme, Melhor Realizador, Melhor Argumento Adaptado e Melhor Montagem. O "divertimento" funcionou.</div>
+          <div class="fc-ratings">
+            <div class="rating-badge imdb"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 2h16a2 2 0 012 2v16a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2zm2 4v12h2.5V6H6zm4 0v12h2.5V6H10zm5.5 0L14 12l1.5 6H18l1.5-6L18 6h-2.5z"/></svg>IMDb 8.5</div>
+            <div class="rating-badge rt-certified"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>RT 91%</div>
+          </div>
+          <div class="fc-tags"><span class="fc-tag">Thriller</span><span class="fc-tag">Identidade</span><span class="fc-tag">Scorsese</span></div>
+        </div>
+      </div>
+
+      <!-- APOCALYPSE NOW -->
+      <div class="fc rv" data-tags="guerra" onclick="playFilm(this)">
+        <div class="fc-vid">
+          <iframe src="https://www.youtube.com/embed/FTjG-Aux_yQ?rel=0&modestbranding=1" title="Apocalypse Now" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          <div class="fc-overlay"><div class="play-circle"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+        </div>
+        <div class="fc-body">
+          <div class="fc-meta-row"><span class="fc-yr">1979</span></div>
+          <div class="fc-title">Apocalypse Now</div>
+          <div class="fc-dir">Francis Ford Coppola</div>
+          <p class="fc-desc">Uma descida ao coração das trevas no Vietname. Coppola quase perdeu a sanidade a fazê-lo — e isso sente-se em cada fotograma. Não é um filme sobre a guerra; é um filme sobre o que a guerra faz à alma humana.</p>
+          <div class="fc-impact">💬 As filmagens duraram 238 dias em vez dos 16 planeados. Marlon Brando chegou gordo e sem ter lido o guião. O documentário sobre a rodagem é tão perturbador quanto o próprio filme.</div>
+          <div class="fc-ratings">
+            <div class="rating-badge imdb"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 2h16a2 2 0 012 2v16a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2zm2 4v12h2.5V6H6zm4 0v12h2.5V6H10zm5.5 0L14 12l1.5 6H18l1.5-6L18 6h-2.5z"/></svg>IMDb 8.4</div>
+            <div class="rating-badge rt-certified"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>RT 91%</div>
+          </div>
+          <div class="fc-tags"><span class="fc-tag">Vietname</span><span class="fc-tag">Imperialismo</span><span class="fc-tag">Loucura</span></div>
+        </div>
+      </div>
+
+      <!-- THERE WILL BE BLOOD -->
+      <div class="fc rv" data-tags="crime" onclick="playFilm(this)">
+        <div class="fc-vid">
+          <iframe src="https://www.youtube.com/embed/FeSLPELpMeM?rel=0&modestbranding=1" title="There Will Be Blood" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          <div class="fc-overlay"><div class="play-circle"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div></div>
+        </div>
+        <div class="fc-body">
+          <div class="fc-meta-row"><span class="fc-yr">2007</span></div>
+          <div class="fc-title">There Will Be Blood</div>
+          <div class="fc-dir">Paul Thomas Anderson</div>
+          <p class="fc-desc">A parábola definitiva da ganância capitalista americana. Daniel Day-Lewis entrega a performance mais monumental da sua carreira. Uma obra que dissecou o nascimento do capitalismo petrolífero e a corrupção da religião com frieza cirúrgica.</p>
+          <div class="fc-impact">💬 Day-Lewis não falou com ninguém no set durante meses. A cena final — "I'm finished!" — foi improvisada. Continuou no personagem durante toda a rodagem.</div>
+          <div class="fc-ratings">
+            <div class="rating-badge imdb"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 2h16a2 2 0 012 2v16a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2zm2 4v12h2.5V6H6zm4 0v12h2.5V6H10zm5.5 0L14 12l1.5 6H18l1.5-6L18 6h-2.5z"/></svg>IMDb 8.2</div>
+            <div class="rating-badge rt-certified"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>RT 91%</div>
+          </div>
+          <div class="fc-tags"><span class="fc-tag">Capitalismo</span><span class="fc-tag">Religião</span><span class="fc-tag">Ambição</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- IMPACT -->
+<section class="impact-section" id="impacto">
+  <div class="container">
+    <div class="s-header-center rv">
+      <div class="s-eye">Análise</div>
+      <h2 class="s-title">Como o Cinema<br>Molda a Sociedade</h2>
+      <div class="s-divider"></div>
+    </div>
+    <div class="impact-intro rv">
+      <p class="lead">O cinema não é um espelho passivo da sociedade. É um escultor ativo das mentes, dos valores e das consciências coletivas.</p>
+      <p>Em mais de 130 anos de existência, a sétima arte demonstrou repetidamente a sua capacidade única: traduzir a complexidade do mundo em experiências emocionais partilhadas que transcendem fronteiras, línguas e gerações.</p>
+    </div>
+    <div class="impact-grid">
+      <div class="ic rv"><span class="ic-icon">🪞</span><div class="ic-title">Espelho Social</div><p class="ic-text">Cada grande filme é um documento histórico — um registo das tensões, medos e aspirações de uma época. O cinema capta o que a história oficial frequentemente omite: a experiência humana na sua forma mais íntima e contraditória. Kellner (1995) demonstrou que os filmes são textos culturais que moldam identidades coletivas.</p><span class="ic-stat count-up" data-target="130">0</span><span class="ic-stat-lbl">anos de memória coletiva filmada</span></div>
+      <div class="ic rv d1"><span class="ic-icon">🧠</span><div class="ic-title">Construção Identitária</div><p class="ic-text">As narrativas cinematográficas moldam a forma como nos vemos e como vemos os outros. A representação — ou a sua ausência — tem consequências reais na autoestima de grupos minoritários. hooks (1992) demonstrou como as imagens cinematográficas constroem ou destroem identidades raciais e de género.</p><span class="ic-stat">84%</span><span class="ic-stat-lbl">dos jovens referem o cinema como influência cultural primária</span></div>
+      <div class="ic rv d2"><span class="ic-icon">⚖️</span><div class="ic-title">Impacto Político</div><p class="ic-text">«12 Angry Men» é citado em escolas de Direito em todo o mundo. «12 Years a Slave» reacendeu debates sobre reparações históricas. O cinema traduz injustiças abstratas em experiências emocionais concretas que mobilizam audiências e governos — um poder que nenhum outro medium possui com a mesma intensidade.</p><span class="ic-stat count-up" data-target="200">0</span><span class="ic-stat-lbl">leis influenciadas diretamente por filmes nos EUA</span></div>
+      <div class="ic rv"><span class="ic-icon">🌍</span><div class="ic-title">Globalização Cultural</div><p class="ic-text">A vitória de «Parasite» nos Óscares simbolizou uma rutura com a hegemonia hollywoodesca que Tomlinson (1991) descreveu como imperialismo cultural. O cinema tornou-se o idioma universal através do qual culturas trocam valores, medos e sonhos — transcendendo barreiras linguísticas e geográficas.</p><span class="ic-stat count-up" data-target="7500">0</span><span class="ic-stat-lbl">filmes produzidos anualmente em todo o mundo</span></div>
+      <div class="ic rv d1"><span class="ic-icon">📚</span><div class="ic-title">Memória Coletiva</div><p class="ic-text">«Schindler's List» integra hoje o currículo escolar em países de todo o mundo. O cinema preserva e transmite memórias que de outra forma se perderiam — tornando-se o guardião mais acessível e emocionalmente poderoso da história humana, como Bordwell e Thompson (2010) documentaram extensivamente.</p><span class="ic-stat count-up" data-target="55">0</span><span class="ic-stat-lbl">países usam filmes como ferramenta educativa obrigatória</span></div>
+      <div class="ic rv d2"><span class="ic-icon">🔥</span><div class="ic-title">Agente de Mudança</div><p class="ic-text">O cinema de intervenção social utiliza deliberadamente a linguagem cinematográfica como ferramenta de denúncia. Turner (1999) descreveu o cinema como o «fórum público onde as sociedades negoceiam os seus valores e elaboram as suas contradições» — uma definição que os filmes desta seleção exemplificam na perfeição.</p><span class="ic-stat">∞</span><span class="ic-stat-lbl">consciências tocadas, mundos abertos, vidas transformadas</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- QUOTE -->
+<div class="qband">
+  <blockquote class="q-text rv">O cinema deu-nos a possibilidade de entrar nas mentes de pessoas que nunca conheceremos, de visitar países que nunca visitaremos, de viver vidas que nunca viveremos. Isso é mais do que entretenimento. É empatia em forma de luz.</blockquote>
+  <div class="q-attr rv">Reflexão sobre o Poder do Cinema</div>
+</div>
+
+<!-- DIRECTORS -->
+<section class="directors-section" id="realizadores">
+  <div class="container">
+    <div class="s-header-center rv">
+      <div class="s-eye">Os Mestres</div>
+      <h2 class="s-title">Realizadores que<br>Mudaram o Mundo</h2>
+      <div class="s-divider"></div>
+    </div>
+    <div class="directors-grid">
+      <div class="dc rv"><div class="dc-num">01</div><div class="dc-name">Martin Scorsese</div><span class="dc-tag">Nova Iorque, EUA · 1942 · Óscar de Melhor Realizador</span><p class="dc-bio">O cronista definitivo da condição humana urbana americana. Scorsese transformou o cinema de género num veículo de exploração psicológica e moral sem precedentes. A sua câmara nunca julga — observa, captura, e deixa-nos decidir. Quatro dos nossos filmes saíram da sua mente e da sua câmara.</p><div class="dc-films"><span class="dc-film">Taxi Driver</span><span class="dc-film">Goodfellas</span><span class="dc-film">The Departed</span><span class="dc-film">Raging Bull</span><span class="dc-film">Casino</span><span class="dc-film">The Wolf of Wall Street</span></div></div>
+      <div class="dc rv d1"><div class="dc-num">02</div><div class="dc-name">Quentin Tarantino</div><span class="dc-tag">Tennessee, EUA · 1963 · 2× Óscar de Melhor Argumento</span><p class="dc-bio">O arquiteto da pós-modernidade cinematográfica. Tarantino construiu um universo próprio onde a violência é estilizada, o diálogo é filosofia disfarçada, e a ficção pode reescrever a história. O cinema como catarse, como revanche, como jogo intelectual elevado ao extremo.</p><div class="dc-films"><span class="dc-film">Pulp Fiction</span><span class="dc-film">Inglourious Basterds</span><span class="dc-film">Django Unchained</span><span class="dc-film">Kill Bill</span><span class="dc-film">Once Upon a Time in Hollywood</span></div></div>
+      <div class="dc rv"><div class="dc-num">03</div><div class="dc-name">Francis Ford Coppola</div><span class="dc-tag">Detroit, EUA · 1939 · 5× Óscar</span><p class="dc-bio">O homem que produziu dois dos maiores filmes da história em anos consecutivos. Coppola tratou o cinema como ópera — grandioso, trágico, impossível de ignorar. «The Godfather» e «Apocalypse Now» definem, juntos, os extremos do que o cinema americano pode alcançar.</p><div class="dc-films"><span class="dc-film">The Godfather</span><span class="dc-film">The Godfather Part II</span><span class="dc-film">Apocalypse Now</span><span class="dc-film">The Conversation</span></div></div>
+      <div class="dc rv d1"><div class="dc-num">04</div><div class="dc-name">Bong Joon-ho</div><span class="dc-tag">Daegu, Coreia do Sul · 1969 · Óscar de Melhor Filme</span><p class="dc-bio">O realizador que quebrou a última barreira do cinema: a língua. Com «Parasite», Bong não apenas venceu o Óscar — redefiniu o que o cinema global pode ser. A sua visão de classes sociais e desigualdade é simultaneamente específica à Coreia e universalmente humana. O cinema depois dele não é o mesmo.</p><div class="dc-films"><span class="dc-film">Parasite</span><span class="dc-film">Snowpiercer</span><span class="dc-film">Memories of Murder</span><span class="dc-film">The Host</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FAVORITES -->
+<section class="fav-section" id="favoritos">
+  <div class="container">
+    <div class="s-header-center rv">
+      <div class="s-eye">Escolhas Pessoais</div>
+      <h2 class="s-title">Os Nossos Filmes<br>Favoritos</h2>
+      <div class="s-divider"></div>
+    </div>
+    <p class="rv" style="text-align:center;max-width:620px;margin:20px auto 0;font-size:.9rem;color:var(--muted);line-height:1.8">Para além da análise académica, o cinema é uma experiência profundamente pessoal. Cada membro do grupo escolheu o filme que o marcou — a obra que ficou, que perturbou, que não sai da cabeça.</p>
+    <div class="fav-grid" style="margin-top:48px">
+
+      <!-- JOBAN — GOODFELLAS -->
+      <div class="fav-card rv" onclick="playFav(this)">
+        <div class="fav-vid">
+          <iframe src="https://www.youtube.com/embed/2ilzidi_J8Q?rel=0&modestbranding=1" title="Goodfellas" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          <div class="fav-ov"><button class="fav-play"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button></div>
+        </div>
+        <div class="fav-info">
+          <div class="fav-person">
+            <div class="fav-av">J</div>
+            <div><span class="fav-pname">Joban</span><span class="fav-ptag">Escolha Pessoal</span></div>
+          </div>
+          <div class="fav-ftitle">Goodfellas</div>
+          <div class="fav-fmeta">Martin Scorsese · 1990 · IMDb 8.7 · RT 93%</div>
+          <p class="fav-fdesc">Nenhum filme capturou a sedução e a autodestruição do sonho americano com tanta honestidade como Goodfellas. Scorsese não faz julgamentos — mostra tudo, a glória e a podridão, e deixa o espetador confrontar-se com o facto de que é impossível não ficar tentado pela vida que vê no ecrã.</p>
+          <div class="fav-fq">"As long as I can remember, I always wanted to be a gangster." — A primeira frase já diz tudo.</div>
+        </div>
+      </div>
+
+      <!-- RICARDO — TROPA DE ELITE -->
+      <div class="fav-card rv d1" onclick="playFav(this)">
+        <div class="fav-vid">
+          <iframe src="https://www.youtube.com/embed/cb-rUfBTQ1g?rel=0&modestbranding=1" title="Tropa de Elite" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          <div class="fav-ov"><button class="fav-play"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button></div>
+        </div>
+        <div class="fav-info">
+          <div class="fav-person">
+            <div class="fav-av">R</div>
+            <div><span class="fav-pname">Ricardo</span><span class="fav-ptag">Escolha Pessoal</span></div>
+          </div>
+          <div class="fav-ftitle">Tropa de Elite</div>
+          <div class="fav-fmeta">José Padilha · 2007 · Brasil · Urso de Ouro Berlim</div>
+          <p class="fav-fdesc">O filme mais importante do cinema brasileiro do século XXI. José Padilha mergulhou no coração negro do sistema de segurança do Rio de Janeiro, expondo a cumplicidade entre corrupção policial e política. Gerou um debate nacional que ainda ressoa no Brasil — e fez o mundo repensar a violência estrutural.</p>
+          <div class="fav-fq">"O sistema é maior do que qualquer um de nós." — Capitão Nascimento</div>
+        </div>
+      </div>
+
+      <!-- VANSH — RRR -->
+      <div class="fav-card rv" onclick="playFav(this)">
+        <div class="fav-vid">
+          <iframe src="https://www.youtube.com/embed/NgBoMJy386M?rel=0&modestbranding=1" title="RRR" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          <div class="fav-ov"><button class="fav-play"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button></div>
+        </div>
+        <div class="fav-info">
+          <div class="fav-person">
+            <div class="fav-av">V</div>
+            <div><span class="fav-pname">Vansh</span><span class="fav-ptag">Escolha Pessoal</span></div>
+          </div>
+          <div class="fav-ftitle">RRR</div>
+          <div class="fav-fmeta">S. S. Rajamouli · 2022 · Índia · Óscar Melhor Canção</div>
+          <p class="fav-fdesc">A epopeia indiana que conquistou o mundo inteiro. «RRR» é a prova definitiva de que o cinema indiano chegou ao cenário global — ação, emoção, anti-colonialismo e uma dança que a internet nunca vai esquecer. Venceu o Óscar de Melhor Canção Original e abriu as portas do mundo para o cinema de Tollywood.</p>
+          <div class="fav-fq">"A amizade verdadeira não conhece fronteiras — nem de nação, nem de crença." — Komaram Bheem</div>
+        </div>
+      </div>
+
+      <!-- SARAN — BORAT -->
+      <div class="fav-card rv d1" onclick="playFav(this)">
+        <div class="fav-vid">
+          <iframe src="https://www.youtube.com/embed/ZN-dGVbCjLI?rel=0&modestbranding=1" title="Borat" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          <div class="fav-ov"><button class="fav-play"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></button></div>
+        </div>
+        <div class="fav-info">
+          <div class="fav-person">
+            <div class="fav-av">S</div>
+            <div><span class="fav-pname">Saran</span><span class="fav-ptag">Escolha Pessoal</span></div>
+          </div>
+          <div class="fav-ftitle">Borat</div>
+          <div class="fav-fmeta">Larry Charles · 2006 · EUA/Cazaquistão · Globo de Ouro Melhor Ator (Comédia)</div>
+          <p class="fav-fdesc">Nenhum filme expôs os preconceitos e contradições da sociedade americana de forma tão perturbadora — e ao mesmo tempo hilariante — como Borat. Sacha Baron Cohen infiltrou-se na América real com uma câmara oculta, e o que descobriu foi mais absurdo do que qualquer ficção. Uma sátira social que envergonhou o mundo e fez toda a gente rir da própria desconfortável verdade.</p>
+          <div class="fav-fq">"My name is Borat. I come from Kazakhstan." — Três palavras que mudaram a comédia para sempre.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CONCLUSION -->
+<section class="conclusion-section" id="conclusao">
+  <div class="container">
+    <div class="rv" style="margin-bottom:40px">
+      <div class="s-eye">Conclusão</div>
+      <h2 class="concl-title">O Cinema Nunca<br>É Apenas um Filme</h2>
+    </div>
+    <div class="concl-body rv">
+      <p class="lead">Ao longo desta análise, percorremos mais de 130 anos de cinema e dezasseis obras que demonstraram, de formas diferentes, que a sétima arte é muito mais do que entretenimento.</p>
+      <p>O cinema é simultaneamente espelho e escultor da sociedade. Reflete as tensões, medos e aspirações de cada época — mas também molda identidades, forma opiniões e contribui ativamente para a construção das realidades sociais que representa. Esta dupla dimensão, que Kellner (1995) descreveu como representacional e performativa, confere ao cinema uma relevância sociológica e cultural única.</p>
+      <p>De «12 Angry Men» a «Parasite», os filmes que estudámos partilham uma característica: ultrapassaram a tela. Geraram debates públicos, influenciaram legislação, mudaram perceções culturais e ficaram gravados na memória coletiva de gerações inteiras. A hegemonia de Hollywood, questionada por Tomlinson (1991) como mecanismo de americanização cultural, foi desafiada pelo cinema coreano, indiano e latino-americano que os nossos filmes favoritos representam.</p>
+      <p>As escolhas pessoais do grupo — de Goodfellas a The Wolf of Wall Street, de Tropa de Elite a RRR — ilustram a universalidade do cinema: fala a todas as culturas, em todas as línguas, sobre aquilo que nos une enquanto seres humanos. O cinema, como Turner (1999) argumentou, é o fórum público onde as sociedades negoceiam os seus valores.</p>
+      <p>Em conclusão, o impacto do cinema na sociedade é multidimensional, profundo e permanente. Enquanto houver histórias humanas para contar — e seres humanos para as receber — o cinema continuará a ser a forma de arte mais poderosa que a humanidade alguma vez criou.</p>
+    </div>
+    <div class="refs rv">
+      <div class="refs-title">Referências Bibliográficas</div>
+      <div class="ref">hooks, b. (1992). <em>Black Looks: Race and Representation</em>. South End Press. [Representação de minorias no cinema e construção de identidade]</div>
+      <div class="ref">Kellner, D. (1995). <em>Media Culture: Cultural Studies, Identity and Politics between the Modern and the Post-modern</em>. Routledge. [Cinema como texto cultural e agente de socialização]</div>
+      <div class="ref">Tomlinson, J. (1991). <em>Cultural Imperialism: A Critical Introduction</em>. Pinter Publishers. [Hegemonia de Hollywood e americanização cultural]</div>
+      <div class="ref">Turner, G. (1999). <em>Film as Social Practice</em> (3.ª ed.). Routledge. [Cinema como fórum público de negociação de valores]</div>
+      <div class="ref">Bordwell, D. & Thompson, K. (2010). <em>Film Art: An Introduction</em> (9.ª ed.). McGraw-Hill. [Linguagem cinematográfica e análise formal de filmes]</div>
+      <div class="ref">Stam, R. (2000). <em>Film Theory: An Introduction</em>. Blackwell Publishers. [Teoria do cinema e estudos culturais]</div>
+      <div class="ref">Jameson, F. (1992). <em>Signatures of the Visible</em>. Routledge. [Cinema, pós-modernismo e crítica cultural]</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ft-logo">Cinema & Sociedade</div>
+  <div class="ft-members">
+    <div class="ft-member">Joban · <span>Goodfellas</span></div>
+    <div class="ft-member">Ricardo · <span>Tropa de Elite</span></div>
+    <div class="ft-member">Vansh · <span>RRR</span></div>
+    <div class="ft-member">Saran · <span>Wolf of Wall Street</span></div>
+  </div>
+  <div class="ft-copy">Trabalho AI · 2026</div>
+</footer>
+
+<script>
+// MOBILE MENU
+const menuBtn=document.getElementById('menuBtn');
+const mobileMenu=document.getElementById('mobileMenu');
+const mobileClose=document.getElementById('mobileClose');
+menuBtn.addEventListener('click',()=>mobileMenu.classList.add('open'));
+mobileClose.addEventListener('click',()=>mobileMenu.classList.remove('open'));
+function closeMob(){mobileMenu.classList.remove('open')}
+
+// SCROLL PROGRESS
+const bar=document.getElementById('progress');
+window.addEventListener('scroll',()=>{
+  const s=document.documentElement.scrollTop;
+  const h=document.documentElement.scrollHeight-window.innerHeight;
+  bar.style.width=(s/h*100)+'%';
+},{passive:true});
+
+// PARTICLES
+const pc=document.getElementById('particles');
+for(let i=0;i<14;i++){
+  const p=document.createElement('div');
+  p.className='particle';
+  const sz=Math.random()*2.5+1;
+  p.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;background:rgba(201,168,76,${Math.random()*.25+.04});animation-duration:${Math.random()*18+14}s;animation-delay:-${Math.random()*18}s`;
+  pc.appendChild(p);
+}
+
+// REVEAL
+const rvEls=document.querySelectorAll('.rv');
+const rvObs=new IntersectionObserver((entries)=>{
+  entries.forEach((e,i)=>{
+    if(e.isIntersecting){setTimeout(()=>e.target.classList.add('in'),i*50);rvObs.unobserve(e.target)}
+  });
+},{threshold:.07,rootMargin:'0px 0px -20px 0px'});
+rvEls.forEach(el=>rvObs.observe(el));
+
+// PLAY FILMS
+function playFilm(card){
+  if(card.classList.contains('playing'))return;
+  document.querySelectorAll('.fc.playing').forEach(c=>{
+    c.classList.remove('playing');
+    const f=c.querySelector('iframe');
+    const s=f.src;f.src='';f.src=s.replace('&autoplay=1','');
+  });
+  card.classList.add('playing');
+  const f=card.querySelector('iframe');
+  if(!f.src.includes('autoplay'))f.src=f.src+'&autoplay=1';
+}
+function playFav(card){
+  if(card.classList.contains('playing'))return;
+  document.querySelectorAll('.fav-card.playing').forEach(c=>{
+    c.classList.remove('playing');
+    const f=c.querySelector('iframe');
+    const s=f.src;f.src='';f.src=s.replace('&autoplay=1','');
+  });
+  card.classList.add('playing');
+  const f=card.querySelector('iframe');
+  if(!f.src.includes('autoplay'))f.src=f.src+'&autoplay=1';
+}
+
+// FILTER
+document.querySelectorAll('.fbtn').forEach(btn=>{
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));
+    this.classList.add('active');
+    const filter=this.dataset.filter;
+    document.querySelectorAll('.fc').forEach(card=>{
+      const tags=card.dataset.tags||'';
+      if(filter==='all'||tags.includes(filter)){
+        card.style.display='';
+        setTimeout(()=>{card.style.opacity='1';card.style.transition='opacity .35s'},10);
+      } else {
+        card.style.opacity='0';
+        setTimeout(()=>{card.style.display='none'},340);
+      }
+    });
+  });
+});
+
+// COUNT UP
+const cuEls=document.querySelectorAll('.count-up');
+const cuObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const el=e.target;
+      const target=+el.dataset.target;
+      const step=target/55;
+      let cur=0;
+      const t=setInterval(()=>{
+        cur+=step;
+        if(cur>=target){cur=target;clearInterval(t)}
+        el.textContent=Math.floor(cur)+(target>=1000?'+':'');
+      },36);
+      cuObs.unobserve(el);
+    }
+  });
+},{threshold:.4});
+cuEls.forEach(el=>cuObs.observe(el));
+
+// ACTIVE NAV LINKS
+const secs=document.querySelectorAll('section[id]');
+const navAs=document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll',()=>{
+  let cur='';
+  secs.forEach(s=>{if(window.scrollY>=s.offsetTop-80)cur=s.id});
+  navAs.forEach(a=>{
+    a.classList.remove('active-link');
+    if(a.getAttribute('href')==='#'+cur)a.classList.add('active-link');
+  });
+},{passive:true});
+</script>
+</body>
+</html>
